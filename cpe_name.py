@@ -1,8 +1,9 @@
 import requests
 import pandas as pd
+import json
 
 PRODUCTS_FILE = 'products.csv'
-URL = 'https://services.nvd.nist.gov/rest/json/cpematch/2.0'
+URL = 'https://services.nvd.nist.gov/rest/json/cpes/2.0'
 
 products = pd.read_csv(PRODUCTS_FILE)
 
@@ -14,11 +15,14 @@ for index, row in products.iterrows():
     cpe_string = f'cpe:2.3:*:{owner}:{product}:{version}:*:*:*:*:*:*:*'
 
     parameters = {
-        'matchStringSearch': cpe_string
+        'cpeMatchString': cpe_string
     }
 
     response = requests.get(url=URL, params=parameters)
-    data = str(response.json())
+    # data = json.dumps(response.json()['products'])
+
+    data = response.json()['products']
+    print(data[0]['cpe']['cpeName'])
     
-    with open('output.txt', 'a', encoding='utf-8') as file:
-        file.write(data)
+    # with open('output.json', 'a') as file:
+    #     file.write(data)
