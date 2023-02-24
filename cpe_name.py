@@ -1,6 +1,5 @@
 import requests
 import pandas as pd
-import json
 
 PRODUCTS_FILE = 'products.csv'
 URL = 'https://services.nvd.nist.gov/rest/json/cpes/2.0'
