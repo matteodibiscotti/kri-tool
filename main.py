@@ -17,7 +17,7 @@ def main():
         for sub_product in product_data[product]:
 
             print(sub_product)
-            sleep(1)
+            # sleep(1)
 
             parameters = {
                 'cpeName': sub_product
@@ -26,9 +26,16 @@ def main():
             response = requests.get(url=URL, params=parameters, headers=HEADERS)
             response.raise_for_status()
 
-            data = response.json()['vulnerabilities'][0]['cve']['id']
+            cve_id = response.json()['vulnerabilities'][0]['cve']['id']
+            description = response.json()['vulnerabilities'][0]['cve']['descriptions'][0]['value']
+            base_score = response.json()['vulnerabilities'][0]['cve']['metrics']['cvssMetricV2'][0]['cvssData']['baseScore']
+            base_severity = response.json()['vulnerabilities'][0]['cve']['metrics']['cvssMetricV2'][0]['baseSeverity']
 
-            # print(data)
+            print(sub_product) # split string on colon and extract product name and version
+            print(cve_id)
+            print(description)
+            print(base_score)
+            print(base_severity)
 
     
 
