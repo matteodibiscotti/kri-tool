@@ -1,7 +1,6 @@
 import requests
 import pandas as pd
 import cpe_name
-import json
 from time import sleep
 import os
 
@@ -13,11 +12,16 @@ HEADERS = {'apiKey': API_KEY}
 def main():
     product_ids = list(product_data.keys())
 
+    col_headers = ['product', 'version', 'type', 'cve_id', 'description', 'baseScore', 'baseSeverity']
+    output_df = pd.DataFrame(columns=col_headers)
+
+    count = 0
+
     for product in product_ids:
+        
         for sub_product in product_data[product]:
 
-            print(sub_product)
-            # sleep(1)
+            split_id = sub_product.split(':')
 
             parameters = {
                 'cpeName': sub_product
@@ -30,43 +34,18 @@ def main():
             description = response.json()['vulnerabilities'][0]['cve']['descriptions'][0]['value']
             base_score = response.json()['vulnerabilities'][0]['cve']['metrics']['cvssMetricV2'][0]['cvssData']['baseScore']
             base_severity = response.json()['vulnerabilities'][0]['cve']['metrics']['cvssMetricV2'][0]['baseSeverity']
+            product = sub_product.split(":")[4]
+            version = sub_product.split(":")[5]
+            sub_category = ':'.join(split_id[6:])
 
-            print(sub_product) # split string on colon and extract product name and version
-            print(cve_id)
-            print(description)
-            print(base_score)
-            print(base_severity)
+            output_df.loc[len(output_df.index)] = [product, version, sub_category, cve_id, description, 
+                                                    base_score, base_severity]
 
-    
+            count += 1
 
-    # data = json.dumps(response.json())
+            print(f"COMPLETED {count}: {product} {version}: Type: {sub_category}")
 
-
-    # # print(json.dumps(data))
-    # with open('output.json', 'a') as file:
-    #     file.write(data)
-
-    # print(product_ids)
+    output_df.to_csv('results.csv', index=False)
 
 if __name__ == "__main__":
     main()
-
-
-'''
-apache,http_server,2.4.54
-f5,nginx,1.23.2
-isc,bind,9.19.6
-
-return a list of vulnerabilities with cvss of 8 or more for the past 30 days
-
-https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName=cpe:2.3:a:isc:bind:9.7.1:p1:*:*:*:*:*:*
-'''
-
-'''
-cpe_name.py returns a dictionary of lists
-in main.py, create a list of the keys
-loop through the keys
-each product may have multiple CPE names so in the loop get the len of the value and loop through that to get all the CVE info
-
-we want to output it as a csv file so create 
-'''
