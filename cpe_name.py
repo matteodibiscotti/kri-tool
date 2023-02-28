@@ -10,9 +10,10 @@ HEADERS = {'apiKey': API_KEY}
 def get_cpe_names():
     products = pd.read_csv(PRODUCTS_FILE)
     product_data = {}
-    cpeNames = []
+    
 
     for index, row in products.iterrows():
+        cpeNames = []
         owner = row['owner']
         product = row['product']
         version = row['version']
