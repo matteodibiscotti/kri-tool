@@ -38,7 +38,8 @@ def main():
             version = sub_product.split(":")[5]
             sub_category = ':'.join(split_id[6:])
 
-            output_df.loc[len(output_df.index)] = [product, version, sub_category, cve_id, description, 
+            if base_score >= 8:
+                output_df.loc[len(output_df.index)] = [product, version, sub_category, cve_id, description, 
                                                     base_score, base_severity]
 
             count += 1
